@@ -1,0 +1,82 @@
+<b> Tabela </b>
+
+
+
+
+%for izlet in izleti.pretekli:
+<table>
+    <tr> 
+        <td>
+            {{izlet.destinacija}}
+        </td>
+        <td>
+            {{izlet.skupna_poraba()}} €
+        </td>
+    </tr>
+
+</table>
+%end
+
+
+<table>
+    <tr> 
+        <td>
+            {{izleti.trenutni.destinacija}}
+        </td>
+            
+    </tr>
+    <tr>
+        <td>
+            Poraba do zdaj:
+        </td>
+        <td>
+            {{izleti.trenutni.skupna_poraba()}} €
+        </td>
+        <td>
+            Procenti: 
+        </td>
+        <td>
+            {{round(izleti.trenutni.skupna_poraba_procenti(), 2)}} %
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Trenutno stanje:
+        </td>
+        <td>
+            {{izleti.trenutni.trenutno_stanje}} €
+        </td>
+    </tr>
+
+</table>
+
+
+%for izlet in izleti.prihodnji:
+<table>
+    <tr> 
+        <td>
+            {{izlet.destinacija}}
+        </td>
+        <td>
+            {{izlet.skupna_poraba()}} €
+        </td>
+    </tr>
+
+</table>
+%end
+
+
+<form action="/" method="POST">
+
+    <label>Ime izdelka:</label><br>
+    <input type="text" id="ime_izdelka_ali_storitve" name="ime_izdelka_ali_storitve" placeholder="ime"><br>
+
+    <label>Ceno izdelka:</label><br>
+    <input type="number" id="cena" name="cena" placeholder="10"><br>
+
+    <label>kolicina:</label><br>
+    <input type="number" id="kolicina" name="kolicina" placeholder="1"><br>
+
+    <input type="submit" value="Submit">
+
+  </form>
