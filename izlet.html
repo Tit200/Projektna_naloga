@@ -38,53 +38,45 @@
 <div class="container">
 
     <div class="row">
-
         <img src="/slika"> 
     </div>
 
     <div class="row">
+        <div class="col">
+            <form action={{f"/{id_uporabnika}/izlet/{st_izleta}"}} method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Ime izdelka:</label><br>
+                    <input class="form-control" type="text" id="ime_izdelka_ali_storitve" name="ime_izdelka_ali_storitve" placeholder="ime"><br>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ceno izdelka:</label><br>
+                    <input class="form-control" type="number" id="cena" name="cena" placeholder="10"><br>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">kolicina:</label><br>
+                    <input class="form-control" type="number" id="kolicina" name="kolicina" placeholder="1"><br>
+                </div>
+                    <input type="submit" value="Submit" class="btn btn-primary">
+            
+              </form>
+
+              <form action={{f"/{id_uporabnika}"}} method="GET">
+
+                <input type="submit" value="Nazaj" class="btn btn-primary">
+
+             </form>
+             
+        </div>
     
 
         <div class="col">
-            
-    <table class="table table-danger">
-        <thead>
-            <tr>
-                <th scope="col">Destinacija</th>
-                <th  scope="col">Skupna poraba</th>
-            </tr>
-        </thead>
-        <tbody>
-    %for izlet in izleti.pretekli():
-            <tr>
-        
-                <td>
-                    {{izlet.destinacija}}
-                </td>
-            
-                <td>
-                    {{izlet.skupna_poraba()}} €
-                </td>
-
-                <td>
-                    <form action={{f"/{id_uporabnika}/izlet/{izleti.vsi().index(izlet)}"}} method="GET">
-
-                        <input type="submit" value="=>" class="btn btn-primary">
- 
-                     </form>
-                </td>
-
-            </tr>
-
-    %end
-    </table>
 
 
 
     <table class="table table-success">
         <thead>
             <tr>
-                % aktualni = izleti.aktualni()
+                % aktualni = izlet
                 <th scope="col">Destinacija: {{aktualni.destinacija}}</th>
                 <th scope="col"> (od {{aktualni.datum_zacetek}} do {{aktualni.datum_konec}})</th>
             </tr>
@@ -105,53 +97,63 @@
                 <td>
                     {{aktualni.trenutno_stanje}} €
                 </td>
-
-                <td>
-                    <form action={{f"/{id_uporabnika}/izlet/{izleti.vsi().index(aktualni)}"}} method="GET">
-
-                        <input type="submit" value="=>" class="btn btn-primary">
- 
-                     </form>
-                </td>
             </tr>
         </tbody>
 
     </table>
 
-
-
-    <table class="table table-warning">
+    <h3>Nakupi</h3>
+    <table class="table table-success">
         <thead>
             <tr>
-                <th scope="col">Destinacija</th>
-                <th  scope="col">Skupna poraba</th>
+                % aktualni = izlet
+                <th scope="col">Ime</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Količina</th>
+                <th scope="col">Odstotek</th>
             </tr>
+
         </thead>
         <tbody>
-    %for izlet in izleti.prihodnji():
-                <tr>
 
-                    <td>
-                        {{izlet.destinacija}}
-                    </td>
-                    <td>
-                        {{izlet.skupna_poraba()}} €
-                    </td>
+            %for i,nakup in enumerate(izlet.nakupi):
 
-                    <td>
-                        <form action={{f"/{id_uporabnika}/izlet/{izleti.vsi().index(izlet)}"}} method="GET">
-    
-                            <input type="submit" value="=>" class="btn btn-primary">
-     
-                         </form>
-                    </td>
-                </tr>
+            <tr>
+
+                <td>
+                    {{nakup.izdelek_ali_storitev}}            
+                </td>
+
+                <td>
+                    {{nakup.cena}}
+                </td>
+
+                <td>
+                    {{nakup.kolicina}}
+                </td>
+
+                <td>
+                    {{round(((nakup.cena * nakup.kolicina) / izlet.zacetno_stanje) * 100)}} %
+                </td>
                 
-    %end
+                <td>
+                    <form action={{f"/{id_uporabnika}/izlet/{st_izleta}/izbrisi/{i}"}} method="GET">
+
+                       <input type="submit" value="X" class="btn btn-primary">
+
+                    </form>
+
+
+                </td>
+
+            </tr>
+            %end
+
+
         </tbody>
 
     </table>
-
+    
 
 
         </div>
