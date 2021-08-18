@@ -1,8 +1,8 @@
 # Projektna: Evidenca_za_dopust
 
-from bottle import route, get, post, request, run, static_file, template
+from bottle import redirect, route, get, post, request, run, static_file, template
 import os
-from datetime import date 
+from datetime import date,datetime
 
 class Izleti:
 
@@ -64,6 +64,7 @@ class Izleti:
 
     
     def vsi(self):
+        """Vrne seznam vseh izletov."""
         return self.izleti
 
     #def remove_izlet#
@@ -130,7 +131,7 @@ izlet_v_izolo.dodaj_nakup(Nakup("pivo", 2.2, 4))
 izlet_v_izolo.dodaj_nakup(Nakup("kokakola", 1.7, 3))
 
 izlet_v_paris = Izlet(400, "Paris", date(2022,4,23), date(2022,5,1))
-izlet_v_paris.dodaj_nakup(Nakup("mona'lisa_fake", 10000, 1))
+izlet_v_paris.dodaj_nakup(Nakup("mona'lisa_fake", 100, 1))
 izlet_v_paris.dodaj_nakup(Nakup("kokakola", 1.7, 3))
 
 izlet_v_hrvasko = Izlet(250, "Hrvaska", date(2021,7,20), date(2021,7,30))
@@ -150,6 +151,7 @@ vsi_uporabniki[123] = izleti
 
 @get('/<id_uporabnika>')
 def index(id_uporabnika):
+    print("id uporabnika je " + id_uporabnika)
     if int(id_uporabnika) in vsi_uporabniki:
 
         izleti = vsi_uporabniki[int(id_uporabnika)]
@@ -158,6 +160,8 @@ def index(id_uporabnika):
         return template('index.html', id_uporabnika = id_uporabnika, izleti=izleti)
     else:
         return f"Uporabnik {id_uporabnika} ne obstaja."
+
+
 
 @post('/<id_uporabnika>/izlet/<st_izleta>')
 def dodaj_nakup(id_uporabnika, st_izleta):
@@ -179,6 +183,10 @@ def dodaj_nakup(id_uporabnika, st_izleta):
 @route('/slika')
 def slika():
     return static_file('SLIKA.jfif', root=os.path.dirname(__file__) )
+
+@route('/favicon.ico')
+def ikona():
+    return static_file('favicon.ico', root=os.path.dirname(__file__) )
 
 
 @get('/<id_uporabnika>/izlet/<st_izleta>')
@@ -204,10 +212,32 @@ def izbris_nakupa(id_uporabnika, st_izleta, st_nakupa):
 
 
 
+@get('/<id_uporabnika>/urejanje')
+def urejanje(id_uporabnika):
+    return template('urejanje.html',id_uporabnika=id_uporabnika)
+    
+
+@post('/<id_uporabnika>/urejanje')
+def dodaj_izlet(id_uporabnika):
+
+    ime_izleta = request.forms.get('destinacija')
+    
+    print("TU JE DEJT")
+    print(request.forms.get('od'))
+
+    od = datetime.strptime(request.forms.get('od'), "%Y-%m-%d").date()
+    do = datetime.strptime(request.forms.get('do'), "%Y-%m-%d").date()
+    zacetno_stanje = int(request.forms.get('zacetno_stanje'))
+
+    nov_izlet = Izlet(zacetno_stanje, ime_izleta, od, do)
+    izleti = vsi_uporabniki[int(id_uporabnika)]
+
+    izleti.dodaj_izlet(nov_izlet)
+
+    st_izleta = izleti.vsi().index(nov_izlet)
 
 
-
-
+    redirect(f"/{id_uporabnika}/izlet/{st_izleta}")  
 
 
 
