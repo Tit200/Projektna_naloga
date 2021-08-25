@@ -1,10 +1,11 @@
 # Projektna_naloga
 
-##Prerequisits
+## Prerequisits
 
--Bottle
--Python(3.9.6)
+- Bottle
 
-##Program
+- Python(3.9.6)
+
+## Program
 
 
