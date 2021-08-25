@@ -47,17 +47,24 @@
 
 
 <div class="container">
+    <div>
+        <h2> Uporabnik: <p style="color: rgb(37 0 185 / 89%);">{{id_uporabnika}}</p></h2>
+    </div>    
 
+  
     <div class="row">
 
         <img src="/slika"> 
     </div>
 
+    
     <div class="row">
     
 
         <div class="col">
             
+
+    %if izleti.vsi():       
     <table class="table table-danger">
         <thead>
             <tr>
@@ -91,12 +98,13 @@
     %end
     </table>
 
-
-
+    
+    % aktualni = izleti.aktualni()
+    %if aktualni != None:
     <table class="table table-success">
         <thead>
             <tr>
-                % aktualni = izleti.aktualni()
+                
                 <th scope="col">Aktualna destinacija: <h3><p style="color:rgb(0, 68, 255);"> {{aktualni.destinacija}} </p></h3> 
                     (od {{aktualni.datum_zacetek}} do {{aktualni.datum_konec}}) </th>
               
@@ -135,7 +143,7 @@
         </tbody>
 
     </table>
-
+    %end
 
 
     <table class="table table-warning">
@@ -176,7 +184,11 @@
         </tbody>
 
     </table>
-
+    %else:
+    <div>
+        <h3><p style="color:rgb(255, 0, 0);">Izletov še ni!</p></h3>
+    </div>
+    %end
     <form action={{f"/{id_uporabnika}/urejanje"}} method="GET">
     
         <input type="submit" value="Urejaj izlete" class="btn btn-primary">
@@ -191,6 +203,7 @@
 
         </div>
     </div>
+
 </div>
 
 

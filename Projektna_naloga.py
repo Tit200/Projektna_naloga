@@ -3,12 +3,19 @@
 from bottle import redirect, route, get, post, request, run, static_file, template
 import os
 from datetime import date,datetime
+import random
+import pickle
+
+
+#===================================================================================================
+# Razredi:
 
 class Izleti:
-
+    ''' Razred, ki predstavlja uporabnikove izlete. '''
     def __init__(self, izleti=[]):
         ''' To so seznami izletov. '''
         self.izleti = izleti
+
 
     def pretekli(self):
         ''' To je seznam preteklih izletov.'''
@@ -21,6 +28,7 @@ class Izleti:
                 continue
         return pretekli_izleti
     
+
     def aktualni(self):
         '''To je izlet, ki bodisi traja sedaj bodisi je naslednji v vrsti.'''
         danes = date.today()
@@ -39,6 +47,7 @@ class Izleti:
 
         return aktualni
 
+
     def prihodnji(self):
         ''' To je seznam prihodnjih izletov, ki niso aktualni.'''
         danes = date.today()
@@ -55,10 +64,12 @@ class Izleti:
         
         return prihodnji_izleti
 
+
     def pridobi_izlet(self, st_izleta):
         '''To nam vrne izlet.'''
         return self.izleti[st_izleta]
     
+
     def dodaj_izlet(self, izlet):
         self.izleti.append(izlet)
 
@@ -67,8 +78,6 @@ class Izleti:
         """Vrne seznam vseh izletov."""
         return self.izleti
 
-    #def remove_izlet#
-    
 
 class Izlet:
 
@@ -83,6 +92,7 @@ class Izlet:
         self.porabil_danes = 0
         self.nakupi = [] 
 
+
     def dodaj_nakup(self, nakup):
 
         self.nakupi.append(nakup) 
@@ -90,27 +100,25 @@ class Izlet:
 
     
     def izbrisi_nakup(self, st_nakupa):
-
+        
         self.trenutno_stanje = self.trenutno_stanje + (self.nakupi[st_nakupa].cena * self.nakupi[st_nakupa].kolicina) 
         del self.nakupi[st_nakupa]
         
 
-
-
     def skupna_poraba(self):
-
+        '''Količina denarja, ki smo ga do sedaj porabili.'''
         denar = 0
         for nakup in self.nakupi:
             denar += nakup.kolicina * nakup.cena 
 
         return denar
-    
-    def skupna_poraba_procenti(self):
 
+
+    def skupna_poraba_procenti(self):
+        '''Delež skupne porabe v procentih'''
         return (self.skupna_poraba() / self.zacetno_stanje) * 100 
 
-
-        
+       
 class Nakup:
 
     def __init__(self, izdelek_ali_storitev, cena, kolicina):
@@ -120,47 +128,20 @@ class Nakup:
         self.kolicina = kolicina
 
 
-
-
-
-
-
-
-izlet_v_izolo = Izlet(300, "Izola", date(2020,3,25), date(2020,4,20))
-izlet_v_izolo.dodaj_nakup(Nakup("pivo", 2.2, 4))
-izlet_v_izolo.dodaj_nakup(Nakup("kokakola", 1.7, 3))
-
-izlet_v_paris = Izlet(400, "Paris", date(2022,4,23), date(2022,5,1))
-izlet_v_paris.dodaj_nakup(Nakup("mona'lisa_fake", 100, 1))
-izlet_v_paris.dodaj_nakup(Nakup("kokakola", 1.7, 3))
-
-izlet_v_hrvasko = Izlet(250, "Hrvaska", date(2021,7,20), date(2021,7,30))
-izlet_v_hrvasko.dodaj_nakup(Nakup("pivo", 2.2, 20))
-izlet_v_hrvasko.dodaj_nakup(Nakup("kokakola", 1.7, 3))
-
-izlet_v_rusijo = Izlet(250, "Rusija", date(2023,7,20), date(2023,7,30))
-izlet_v_rusijo.dodaj_nakup(Nakup("vodka", 2.2, 20))
-izlet_v_rusijo.dodaj_nakup(Nakup("Medved", 1.7, 3))
-
-
-izleti = Izleti([izlet_v_izolo, izlet_v_hrvasko, izlet_v_paris, izlet_v_rusijo])
-
-vsi_uporabniki = {}
-vsi_uporabniki[123] = izleti
-
+#===================================================================================================
+# Spletna stran:
 
 @get('/<id_uporabnika>')
-def index(id_uporabnika):
+def vsi_izleti(id_uporabnika):
     print("id uporabnika je " + id_uporabnika)
     if int(id_uporabnika) in vsi_uporabniki:
 
         izleti = vsi_uporabniki[int(id_uporabnika)]
 
         
-        return template('index.html', id_uporabnika = id_uporabnika, izleti=izleti)
+        return template('views/vsi_izleti.html', id_uporabnika = id_uporabnika, izleti=izleti)
     else:
-        return f"Uporabnik {id_uporabnika} ne obstaja."
-
+        return index(True)  
 
 
 @post('/<id_uporabnika>/izlet/<st_izleta>')
@@ -182,11 +163,12 @@ def dodaj_nakup(id_uporabnika, st_izleta):
 
 @route('/slika')
 def slika():
-    return static_file('SLIKA.jfif', root=os.path.dirname(__file__) )
+    return static_file('resources/SLIKA.jfif', root=os.path.dirname(__file__) )
+
 
 @route('/favicon.ico')
 def ikona():
-    return static_file('favicon.ico', root=os.path.dirname(__file__) )
+    return static_file('resources/favicon.ico', root=os.path.dirname(__file__) )
 
 
 @get('/<id_uporabnika>/izlet/<st_izleta>')
@@ -194,27 +176,21 @@ def izlet(id_uporabnika, st_izleta):
 
     izleti = vsi_uporabniki[int(id_uporabnika)] 
 
-    return template('izlet.html',id_uporabnika = id_uporabnika, izlet = izleti.pridobi_izlet(int(st_izleta)), st_izleta = st_izleta)
-
+    return template('views/izlet.html',id_uporabnika = id_uporabnika, izlet = izleti.pridobi_izlet(int(st_izleta)), st_izleta = st_izleta)
 
 
 @get('/<id_uporabnika>/izlet/<st_izleta>/izbrisi/<st_nakupa>')
 def izbris_nakupa(id_uporabnika, st_izleta, st_nakupa):
 
     izleti = vsi_uporabniki[int(id_uporabnika)] 
-
     izleti.pridobi_izlet(int(st_izleta)).izbrisi_nakup(int(st_nakupa))
+    
     return izlet(id_uporabnika, st_izleta)
-
-
-
-
-
 
 
 @get('/<id_uporabnika>/urejanje')
 def urejanje(id_uporabnika):
-    return template('urejanje.html',id_uporabnika=id_uporabnika)
+    return template('views/urejanje.html',id_uporabnika=id_uporabnika)
     
 
 @post('/<id_uporabnika>/urejanje')
@@ -222,9 +198,6 @@ def dodaj_izlet(id_uporabnika):
 
     ime_izleta = request.forms.get('destinacija')
     
-    print("TU JE DEJT")
-    print(request.forms.get('od'))
-
     od = datetime.strptime(request.forms.get('od'), "%Y-%m-%d").date()
     do = datetime.strptime(request.forms.get('do'), "%Y-%m-%d").date()
     zacetno_stanje = int(request.forms.get('zacetno_stanje'))
@@ -236,34 +209,44 @@ def dodaj_izlet(id_uporabnika):
 
     st_izleta = izleti.vsi().index(nov_izlet)
 
-
     redirect(f"/{id_uporabnika}/izlet/{st_izleta}")  
 
 
+@post('/')
+def izberi_uporabnika():
+    
+    pridobljen_id = request.forms.get('id_uporabnika')
+    
+    redirect(f"/{pridobljen_id}")  
 
 
+@get('/')
+def index(ne_obstaja=False):
+    return template('views/index.html', ne_obstaja=ne_obstaja)
+
+   
+@get('/generiraj')
+def generiraj_uporabnika():
+
+    id = random.randint(100000000000,999999999999)
+
+    while id in vsi_uporabniki:
+        id = random.randint(100000000000,999999999999)
+
+    vsi_uporabniki[id]=Izleti() 
+
+    redirect(f"/{id}")                                
 
 
+#===================================================================================================
+# Shranjevanje podatkov:
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+with open('podatki.txt', 'rb') as podatki:
+    vsi_uporabniki=pickle.load(podatki)
 
 run(host='localhost', port=8080)
 
-
-
+with open('podatki.txt', 'wb') as podatki:
+    pickle.dump(vsi_uporabniki, podatki, protocol=pickle.HIGHEST_PROTOCOL)
 

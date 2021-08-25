@@ -9,7 +9,7 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     
-        <title>Urejanje izletov</title>
+        <title>Generiranje uporabnikov</title>
     </head>
 
     <body>
@@ -29,37 +29,36 @@
 
 
       
-     <div>
-    <form action={{f"/{id_uporabnika}/urejanje"}} method="POST">
- 
-     <div class="mb-3">
-         <label class="form-label">Destinacija:</label><br>
-         <input class="form-control" type="text" id="destinacija" name="destinacija" placeholder="ime"><br>
-     </div>
+    <div>
+        <h3>Log in:</h3>
+        <form action={{'/'}} method="POST">
+            <div class="mb-3">
+                <label class="form-label">ID uporabnika</label><br>
+                <input class="form-control" type="text" id="id_uporabnika" name="id_uporabnika" placeholder="123"><br>
+            </div>
+           
+                <input type="submit" value="Log in" class="btn btn-primary">
+        
+        </form>
 
-     <div class="mb-3">
-         <label class="form-label">Od:</label><br>
+       %if ne_obstaja:
+            <div>
+                <p style="color:rgb(255, 0, 0);">Uporabnik ne obstaja!</p>
+            </div>
+       %end
+
+    </div>
+    
+    <div>
+        <h3>Generiraj novega uporabnika:</h3>
+
+        <form action={{'/generiraj'}} method="GET">
             
-    <input type="date" id="od" name="od">
+                <input type="submit" value="generiraj" class="btn btn-primary">
+        
+        </form>
+
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Do:</label><br>
-
-    <input type="date" id="do" name="do">
-     </div>
-
-
-     <div class="mb-3">
-         <label class="form-label">Začetno stanje:</label><br>
-         <input class="form-control" type="number" id="zacetno_stanje" name="zacetno_stanje" placeholder="1"><br>
-     </div>
-         <input type="submit" value="Dodaj izlet" class="btn btn-primary">
-    
-      </form>
-    </div>
-    
-    
 
 
 
