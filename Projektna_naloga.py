@@ -182,11 +182,6 @@ def slika():
     return static_file('resources/SLIKA.jfif', root=os.path.dirname(__file__) )
 
 
-@route('/slika2')
-def slika2():
-    return static_file('resources/SLIKA2.jfif', root=os.path.dirname(__file__) )
-
-
 @route('/favicon.ico')
 def ikona():
     return static_file('resources/favicon.ico', root=os.path.dirname(__file__) )
