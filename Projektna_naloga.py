@@ -1,24 +1,30 @@
 # Projektna: Evidenca_za_dopust
 
+
+#===================================================================================================
+# Importi:
+
 from bottle import redirect, route, get, post, request, run, static_file, template
 import os
 from datetime import date,datetime
 import random
 import pickle
 
-
 #===================================================================================================
 # Razredi:
 
+
 class Izleti:
-    ''' Razred, ki predstavlja uporabnikove izlete. '''
+    '''Razred, ki predstavlja uporabnikove izlete.'''
+
+
     def __init__(self, izleti=[]):
-        ''' To so seznami izletov. '''
+        '''To so seznami izletov.'''
         self.izleti = izleti
 
 
     def pretekli(self):
-        ''' To je seznam preteklih izletov.'''
+        '''To je seznam preteklih izletov.'''
         danes = date.today()
         pretekli_izleti = []
         for izlet in self.izleti:
@@ -49,7 +55,7 @@ class Izleti:
 
 
     def prihodnji(self):
-        ''' To je seznam prihodnjih izletov, ki niso aktualni.'''
+        '''To je seznam prihodnjih izletov, ki niso aktualni.'''
         danes = date.today()
         prihodnji_izleti = []
         for izlet in self.izleti:
@@ -71,18 +77,28 @@ class Izleti:
     
 
     def dodaj_izlet(self, izlet):
+        '''To doda izlet k seznamu vseh izletov.'''
         self.izleti.append(izlet)
+
+
+    def izbrisi_izlet(self, izlet):
+        '''To nam izbriše izlet iz seznama vseh izletov.'''
+        self.izleti.remove(izlet)
 
     
     def vsi(self):
-        """Vrne seznam vseh izletov."""
+        '''Ta funkcija vrne seznam vseh izletov.'''
         return self.izleti
 
 
+
 class Izlet:
+    '''Razred, ki predstavlja točno določen izlet in funkcije, 
+    ki se nanj lahko izvajajo.'''
+
 
     def __init__(self, zacetno_stanje, destinacija, datum_zacetek, datum_konec):
-        ''' To je trenuten aktiven izlet. '''
+        '''To je trenuten aktiven izlet.'''
         self.zacetno_stanje = zacetno_stanje
         self.trenutno_stanje = zacetno_stanje
         self.destinacija = destinacija
@@ -94,13 +110,13 @@ class Izlet:
 
 
     def dodaj_nakup(self, nakup):
-
+        '''To doda nakup izletu.'''
         self.nakupi.append(nakup) 
         self.trenutno_stanje = self.trenutno_stanje - nakup.cena * nakup.kolicina 
 
     
     def izbrisi_nakup(self, st_nakupa):
-        
+        '''To izbriše nakup izletu.'''
         self.trenutno_stanje = self.trenutno_stanje + (self.nakupi[st_nakupa].cena * self.nakupi[st_nakupa].kolicina) 
         del self.nakupi[st_nakupa]
         
@@ -119,7 +135,9 @@ class Izlet:
         return (self.skupna_poraba() / self.zacetno_stanje) * 100 
 
        
+
 class Nakup:
+    '''Razred, za nakupe v izletu.'''
 
     def __init__(self, izdelek_ali_storitev, cena, kolicina):
         ''' To predstavlja en nakup. '''
@@ -137,7 +155,6 @@ def vsi_izleti(id_uporabnika):
     if int(id_uporabnika) in vsi_uporabniki:
 
         izleti = vsi_uporabniki[int(id_uporabnika)]
-
         
         return template('views/vsi_izleti.html', id_uporabnika = id_uporabnika, izleti=izleti)
     else:
@@ -146,7 +163,6 @@ def vsi_izleti(id_uporabnika):
 
 @post('/<id_uporabnika>/izlet/<st_izleta>')
 def dodaj_nakup(id_uporabnika, st_izleta):
-
     izleti = vsi_uporabniki[int(id_uporabnika)] 
 
     ime_izdelka_ali_storitve = request.forms.get('ime_izdelka_ali_storitve')
@@ -164,6 +180,11 @@ def dodaj_nakup(id_uporabnika, st_izleta):
 @route('/slika')
 def slika():
     return static_file('resources/SLIKA.jfif', root=os.path.dirname(__file__) )
+
+
+@route('/slika2')
+def slika2():
+    return static_file('resources/SLIKA2.jfif', root=os.path.dirname(__file__) )
 
 
 @route('/favicon.ico')
@@ -235,12 +256,25 @@ def generiraj_uporabnika():
 
     vsi_uporabniki[id]=Izleti() 
 
-    redirect(f"/{id}")                                
+    redirect(f"/{id}")     
+
+
+@get('/<id_uporabnika>/izlet/<st_izleta>/izbrisi_izlet')
+def izbris_izleta(id_uporabnika, st_izleta):
+
+    izleti = vsi_uporabniki[int(id_uporabnika)] 
+    izlet = izleti.pridobi_izlet(int(st_izleta))
+    
+    izleti.izbrisi_izlet(izlet)
+
+    return vsi_izleti(id_uporabnika)                           
 
 
 #===================================================================================================
 # Shranjevanje podatkov:
 
+#Ta koda je namenjena temu, da se podatki kot so: Izleti, nakupi, uporabniški ID-ji,
+# ob izklopu VS-code'a ne izgubijo.
 
 with open('podatki.txt', 'rb') as podatki:
     vsi_uporabniki=pickle.load(podatki)

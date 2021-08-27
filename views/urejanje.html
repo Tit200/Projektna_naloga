@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 
+
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -8,75 +9,88 @@
     
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
+
+
         <title>Urejanje izletov</title>
+
     </head>
 
+    
+
     <body>
-      
 
-        <!-- Optional JavaScript; choose one of the two! -->
+        <!-- Dodana bootstrap knjižnica -->
+         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     
-        <!-- Option 1: Bootstrap Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    
-        <!-- Option 2: Separate Popper and Bootstrap JS -->
-        <!--
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-        -->
+
+<div class="container">
 
 
-
-      
-     <div>
-    <form action={{f"/{id_uporabnika}/urejanje"}} method="POST">
- 
-     <div class="mb-3">
-         <label class="form-label">Destinacija:</label><br>
-         <input class="form-control" type="text" id="destinacija" name="destinacija" placeholder="ime"><br>
-     </div>
-
-     <div class="mb-3">
-         <label class="form-label">Od:</label><br>
-            
-    <input type="date" id="od" name="od">
+    <div class="row">
+        <img src="/slika2"> 
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Do:</label><br>
-
-    <input type="date" id="do" name="do">
-     </div>
-
-
-     <div class="mb-3">
-         <label class="form-label">Začetno stanje:</label><br>
-         <input class="form-control" type="number" id="zacetno_stanje" name="zacetno_stanje" placeholder="1"><br>
-     </div>
-         <input type="submit" value="Dodaj izlet" class="btn btn-primary">
-    
-      </form>
-
-      <form action={{f"/{id_uporabnika}"}} method="GET">
-
-
-        <input type="submit" value="Nazaj" class="btn btn-primary">
-
-     </form>
-    </div>
-    
-    
-
-
-
-
 
         
+    <table>
+
+        <thead>
+            <tr>
+                <h2 align="center"><p style="color:rgb(255, 0, 0);">Dodaj nov izlet.</p></h2>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <div>
+
+            <!-- To je form, kjer dodaš nov izlet k naboru vseh izletov. Ta se bo izpisal na strani vsi_izleti.html zraven vseh ostalih
+            na lokaciji, ki je odvisna od njegovega datuma. --> 
+
+            <form action={{f"/{id_uporabnika}/urejanje"}} method="POST">
+            
+                
+                <div class="mb-3">
+                    <label class="form-label">Destinacija:</label><br>
+                    <input class="form-control" type="text" id="destinacija" name="destinacija" placeholder="ime"><br>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Od:</label><br>
+                    <input type="date" id="od" name="od">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Do:</label><br>
+                    <input type="date" id="do" name="do">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Začetno stanje:</label><br>
+                    <input class="form-control" type="number" id="zacetno_stanje" name="zacetno_stanje" placeholder="1"><br>
+                </div>
+
+                    <input type="submit" value="Dodaj izlet" class="btn btn-primary">
+            
+            </form>
+
+            <!-- To je form za gumbek, ki te popelje nazaj na stran vsi_izleti.html --> 
+
+            <form action={{f"/{id_uporabnika}"}} method="GET">
+
+
+                <input type="submit" value="Nazaj" class="btn btn-primary">
+
+            </form>
+
+
+        </div>
+
+        </tbody>
+
+    </table>
+
+</div>   
+
     </body>
-
-
-
-
 
 </html>
